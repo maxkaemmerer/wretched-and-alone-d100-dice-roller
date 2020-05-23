@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wretched & Alone 100d6 Roller</title>
+    <style>
+        .one {
+            color: red;
+        }
+
+        .not-one {
+            color: green;
+        }
+
+        .container {
+            margin: auto;
+            width: 50%;
+            text-align: center;
+        }
+
+        ul {
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div>
+            <span>Mechanic by: <a href="https://itch.io/profile/speak-the-sky" target="__blank">Speak the Sky</a></span>
+            <span>Html Version by: <a href="https://maxkaemmerer.itch.io/" target="__blank">Max Kämmerer</a></span>
+        </div>
+        <button id="button" onclick="roll()"></button>
+        <div>
+            <label for="last-roll">Last Roll:</label>
+            <ul id="last-roll"></ul>
+        </div>
+    </div>
+
+    <script>
+        var remainingDice = new Array(100).fill(6);
+
+        let button = document.getElementById('button');
+
+        button.innerText = "Roll the remaining dice: " + remainingDice.length.toString();
+
+        function roll() {
+            var rerolledDice = remainingDice.map(() => Math.ceil((Math.random() * 6)));
+            remainingDice = rerolledDice.filter(num => num !== 1);
+
+            button.innerText = "Roll the remaining dice:" + remainingDice.length.toString();
+
+            var lastRollElement = document.getElementById('last-roll');
+            lastRollElement.innerHTML = '';
+            rerolledDice.forEach(num => {
+                var liElement = document.createElement("li");
+                liElement.innerText = num.toString();
+                if (num === 1) {
+                    liElement.classList.add('one');
+                } else {
+                    liElement.classList.add('not-one');
+                }
+                lastRollElement.appendChild(liElement)
+            });
+
+            if(remainingDice.length === 0){
+                button.disabled = true;
+            }
+        }
+    </script>
+</body>
+
+</html>
