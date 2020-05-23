@@ -23,6 +23,10 @@
         ul {
             list-style: none;
         }
+
+        #end-message {
+            display: none;
+        }
     </style>
 </head>
 
@@ -34,41 +38,45 @@
             <span>Html Version by: <a href="https://maxkaemmerer.itch.io/" target="__blank">Max Kämmerer</a></span>
         </div>
         <button id="button" onclick="roll()"></button>
-        <div>
+        <div id="roll-list">
             <label for="last-roll">Last Roll:</label>
             <ul id="last-roll"></ul>
         </div>
+        <span id="end-message">
+            <p>That's it for you. The end is here.. whatever that may mean for you.</p>
+        </span>
     </div>
 
     <script>
         var remainingDice = new Array(100).fill(6);
-
         let button = document.getElementById('button');
 
-        button.innerText = "Roll the remaining dice: " + remainingDice.length.toString();
+        setButtonText();
 
         function roll() {
             var rerolledDice = remainingDice.map(() => Math.ceil((Math.random() * 6)));
             remainingDice = rerolledDice.filter(num => num !== 1);
 
-            button.innerText = "Roll the remaining dice:" + remainingDice.length.toString();
+            setButtonText();
 
             var lastRollElement = document.getElementById('last-roll');
             lastRollElement.innerHTML = '';
             rerolledDice.forEach(num => {
                 var liElement = document.createElement("li");
                 liElement.innerText = num.toString();
-                if (num === 1) {
-                    liElement.classList.add('one');
-                } else {
-                    liElement.classList.add('not-one');
-                }
+                liElement.classList.add(num === 1 ? 'one' : 'not-one');
                 lastRollElement.appendChild(liElement)
             });
 
             if(remainingDice.length === 0){
                 button.disabled = true;
+                document.getElementById('roll-list').style.display = 'none';
+                document.getElementById('end-message').style.display = 'block';
             }
+        }
+
+        function setButtonText(){
+            button.innerText = "Roll the remaining dice: " + remainingDice.length.toString(); 
         }
     </script>
 </body>
