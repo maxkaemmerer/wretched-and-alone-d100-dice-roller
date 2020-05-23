@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wretched & Alone 100d6 Roller</title>
     <style>
+        body {
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
         .one {
             color: red;
         }
@@ -24,8 +28,46 @@
             list-style: none;
         }
 
+        .button:hover {
+            background-color: lightskyblue;
+            transition: background-color 150ms linear;
+        }
+
+        .button {
+            cursor: pointer;
+            background-color: lightblue;
+            transition: background-color 150ms linear;
+            border: 2px solid lightskyblue;
+            border-radius: 15px;
+            color: black;
+            width: 50%;
+            margin: auto;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+            -webkit-touch-callout: none;
+            /* iOS Safari */
+            -webkit-user-select: none;
+            /* Safari */
+            -khtml-user-select: none;
+            /* Konqueror HTML */
+            -moz-user-select: none;
+            /* Old versions of Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+            user-select: none;
+            /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+
+        }
+
         #end-message {
             display: none;
+        }
+
+        #explanation {
+            text-align: justify;
+            text-justify: inter-word;
         }
     </style>
 </head>
@@ -34,10 +76,20 @@
 
     <div class="container">
         <div>
-            <span>Mechanic by: <a href="https://itch.io/profile/speak-the-sky" target="__blank">Speak the Sky</a></span>
-            <span>Html Version by: <a href="https://maxkaemmerer.itch.io/" target="__blank">Max Kämmerer</a></span>
+            <strong><p>A <a href="https://sealedlibrary.itch.io/wretched-alone-srd" target="_blank">Wretched & Alone </a>
+                100d6 dice Roller as discussed 
+                <a href="https://itch.io/jam/wretched-jam/topic/796498/dice-substitute-for-jenga-towers" target="_blank">here</a>.</p></strong>
+                <p>Mechanic by: <a href="https://itch.io/profile/speak-the-sky" target="_blank">Speak the Sky</a></p>
+                <p>Html Version by: <a href="https://maxkaemmerer.itch.io/" target="_blank">Max Kämmerer</a></p>
+
         </div>
-        <button id="button" onclick="roll()"></button>
+
+        <hr />
+        <p id="explanation">Every time you roll, the dice that rolled a 1 are dropped from the dice pool. When you roll
+            again you roll with the reduced pool. Once you reach 0 dice you are done.</p>
+        <div class="button" onclick="reset()">Reset</div>
+        <div class="button" id="roll-button" onclick="roll()"></div>
+        <span id="round-counter"></span>
         <div id="roll-list">
             <label for="last-roll">Last Roll:</label>
             <ul id="last-roll"></ul>
@@ -49,17 +101,24 @@
 
     <script>
         var remainingDice = new Array(100).fill(6);
-        let button = document.getElementById('button');
+        var rollButtonElement = document.getElementById('roll-button');
+        var endMessageElement = document.getElementById('end-message');
+        var rollListElement = document.getElementById('roll-list');
+        var roundCounterElement = document.getElementById('round-counter');
+        var lastRollElement = document.getElementById('last-roll');
+        var rounds = 1;
 
         setButtonText();
+        setRoundCounterText();
 
         function roll() {
+            rounds += 1;
+            setRoundCounterText();
             var rerolledDice = remainingDice.map(() => Math.ceil((Math.random() * 6)));
             remainingDice = rerolledDice.filter(num => num !== 1);
 
             setButtonText();
 
-            var lastRollElement = document.getElementById('last-roll');
             lastRollElement.innerHTML = '';
             rerolledDice.forEach(num => {
                 var liElement = document.createElement("li");
@@ -68,16 +127,29 @@
                 lastRollElement.appendChild(liElement)
             });
 
-            if(remainingDice.length === 0){
-                button.disabled = true;
-                document.getElementById('roll-list').style.display = 'none';
-                document.getElementById('button').style.display = 'none';
-                document.getElementById('end-message').style.display = 'block';
+            if (remainingDice.length === 0) {
+                rollListElement.style.display = 'none';
+                rollButtonElement.style.display = 'none';
+                endMessageElement.style.display = 'block';
             }
         }
 
-        function setButtonText(){
-            button.innerText = "Roll the remaining dice: " + remainingDice.length.toString(); 
+        function reset() {
+            remainingDice = new Array(100).fill(6);
+            rounds = 1;
+            rollListElement.style.display = 'block';
+            rollButtonElement.style.display = 'block';
+            endMessageElement.style.display = 'none';
+            setButtonText();
+            setRoundCounterText();
+            lastRollElement.innerHTML = '';
+        }
+
+        function setButtonText() {
+            rollButtonElement.innerText = "Roll the remaining dice: " + remainingDice.length.toString();
+        }
+        function setRoundCounterText() {
+            roundCounterElement.innerText = "Round: " + rounds.toString();
         }
     </script>
 </body>
